@@ -3,7 +3,7 @@ describe('Create loopback address on devices stored in the inventory', function(
     //Make sure you didn’t skip mounting all devices in inventory, otherwise this workflow might not work correctly.
     //
     //This use case does not work with VRP01 and netconf-testtool devices. 
-	  /*
+	  
     cy.visit('http://localhost:3000') 
     cy.contains('UniConfig').click()	  
     cy.contains('VRP01').parent().find('td').eq(0).click()
@@ -11,11 +11,11 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.contains('Unmount Devices').click()	  
     cy.contains('VRP01').should('not.to.exist')
     cy.contains('netconf-testtool').should('not.to.exist')
-  */
+  
   })
 
 	
-  it('go', function() { 
+  it('creates loopback700929 on all mounted devices', function() { 
     cy.visit('http://localhost:3000') 
 
     cy.contains('UniConfig').click() //look list of mounted devices  
@@ -103,7 +103,16 @@ describe('Create loopback address on devices stored in the inventory', function(
 
     cy.contains('UniConfig').click()	  
     //cy.get('table tbody tr').should('have.length',2)
-
+ /*   cy.wait(5000)
+    cy.contains('XR02').parent().find('td').eq(5).click()
+    cy.url().should('include', '/devices/edit/XR02')	  
+	cy.get('div.operational').scrollIntoView()
+        cy.wait(5000)
+	cy.get('div.operational div.CodeMirror-vscrollbar').scrollTo('bottom', { duration: 2000 })
+	cy.get(':contains(700929)').first().scrollIntoView()
+	cy.go(-1)
+    //cy.get('button[class~="round"]').click({force:true})
+*/
 
     //	  After the main and sub-workflows have completed successfully the loopback addres was created on the devices. Since we are working with emulated devices, we can check a device journal to see if it was really created.
 

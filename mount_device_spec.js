@@ -1,20 +1,23 @@
 describe('Mount devices from UniConfig', function() {
+  //this test is run immediatelly after starting of frinx machine
+  //no device is mounted
   it('Mount cli device', function() {
     cy.visit('http://localhost:3000')
-    cy.contains('UniConfig').click()	  
-    cy.url().should('include', '/devices')	  
+    cy.contains('UniConfig').click()
+
+    cy.url().should('include', '/devices')
 
     cy.get('table tbody tr').should('not.to.exist')
-    cy.contains('Mount Device').click()	  
+    cy.contains('Mount Device').click()
 
-    cy.contains('CLI').click()	  
-    cy.contains('Basic').click()	  
+    cy.contains('CLI').click()
+    cy.contains('Basic').click()
 
     cy.get('#mountcliInput-node-id')
       .clear()
       .type('XR01')
       .should('have.value', 'XR01')
-	  
+
     cy.get('#mountcliInput-host')
       .clear()
       .type('sample-topology')
@@ -31,6 +34,8 @@ describe('Mount devices from UniConfig', function() {
       .click()
 
     //second click to toggle back to ssh
+    //BUG workaroung
+    //TODO temove this later
     cy.get('label[for="mountcliInput-transport-type"] ~ div[class="Dropdown-root"] > div[class="Dropdown-control"] > div[class="Dropdown-arrow-wrapper"] > span')
       .click()
     cy.get('div[class^="Dropdown-option"]').contains('ssh')
@@ -62,7 +67,7 @@ describe('Mount devices from UniConfig', function() {
 
     cy.get('button[class="btn btn-primary"]').contains('Mount Device')
       .then(($button) => {
-	      $button.click()
+      $button.click()
       })
 
     cy.get('button[class="btn btn-primary"]').should('not.to.exist')
@@ -71,48 +76,48 @@ describe('Mount devices from UniConfig', function() {
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
 
     cy.get('table tbody tr').should('have.length',1)
-    cy.contains('XR01').click()	  
+    cy.contains('XR01').click()
 
     cy.get('div.modal-dialog.modal-lg')
-    cy.contains('Basic').click()	  
+    cy.contains('Basic').click()
     cy.get('input[value="connected"]')
-    cy.contains('Available capabilities').click()	  
-    cy.contains('Unavailable capabilities').click()	  
-    cy.contains('Commit error patterns').click()	  
-    cy.contains('Error patterns').click()	  
+    cy.contains('Available capabilities').click()
+    cy.contains('Unavailable capabilities').click()
+    cy.contains('Commit error patterns').click()
+    cy.contains('Error patterns').click()
 
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
     cy.contains('XR01').parent().find('td').eq(0).click()
     cy.contains('XR01').parent().find('td').eq(0).click()
     cy.contains('XR01').parent().find('td').eq(5).click()
-    cy.url().should('include', '/devices/edit/XR01')	  
+    cy.url().should('include', '/devices/edit/XR01')
     cy.get('button[class~="round"]').click({force:true})
     cy.contains('Refresh').click()
 
     //cy.contains('XR01').parent().find('td').eq(0).click()
-    //cy.contains('Unmount Devices').click()	  
+    //cy.contains('Unmount Devices').click()
     //cy.get('table tbody tr').should('not.to.exist')
   })
 
   it('Mount netconf device', function() {
     cy.visit('http://localhost:3000')
-    cy.contains('UniConfig').click()	  
-    cy.url().should('include', '/devices')	  
+    cy.contains('UniConfig').click()
+    cy.url().should('include', '/devices')
 
     cy.get('table tbody tr').should('not.to.exist')
-    cy.contains('Mount Device').click()	  
+    cy.contains('Mount Device').click()
 
-    cy.contains('Netconf').click()	  
-    // this does not work - why ??? cy.contains('Basic').click()	  
-    //cy.get('div.tab-content').contains('Basic', {force:true}).click()	// nefunguje lebo najde prvy Basic na prvom paneli ktory je hidded  
+    cy.contains('Netconf').click()
+    // this does not work - why ??? cy.contains('Basic').click()
+    //cy.get('div.tab-content').contains('Basic', {force:true}).click()// nefunguje lebo najde prvy Basic na prvom paneli ktory je hidded
     cy.get('#mountTabs-tabpane-Netconf').contains('Basic').click()
 
     cy.get('#mountnetconfInput-node-id')
       .clear()
       .type('netconf-testtool')
       .should('have.value', 'netconf-testtool')
-	  
+
     cy.get('#mountnetconfInput-host')
       .clear()
       .type('sample-topology')
@@ -142,7 +147,7 @@ describe('Mount devices from UniConfig', function() {
 
     cy.get('button[class="btn btn-primary"]').contains('Mount Device')
       .then(($button) => {
-	      $button.click()
+      $button.click()
       })
 
     cy.get('button[class="btn btn-primary"]').should('not.to.exist')
@@ -151,28 +156,28 @@ describe('Mount devices from UniConfig', function() {
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
 
     //cy.get('table tbody tr').should('have.length',1)
-    cy.contains('netconf-testtool').click()	  
+    cy.contains('netconf-testtool').click()
 
     cy.get('div.modal-dialog.modal-lg')
-    cy.contains('Basic').click()	  
+    cy.contains('Basic').click()
     cy.get('input[value="connected"]')
-    cy.contains('Available capabilities').click()	  
-    cy.contains('Unavailable capabilities').click()	  
-    //cy.contains('Commit error patterns').click()	  
-    //cy.contains('Error patterns').click()	  
-    cy.contains('Basic').click()	  
+    cy.contains('Available capabilities').click()
+    cy.contains('Unavailable capabilities').click()
+    //cy.contains('Commit error patterns').click()
+    //cy.contains('Error patterns').click()
+    cy.contains('Basic').click()
 
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
     cy.contains('netconf-testtool').parent().find('td').eq(0).click()
     cy.contains('netconf-testtool').parent().find('td').eq(0).click()
     cy.contains('netconf-testtool').parent().find('td').eq(5).click()
-    cy.url().should('include', '/devices/edit/netconf-testtool')	  
+    cy.url().should('include', '/devices/edit/netconf-testtool')
     cy.get('button[class~="round"]').click({force:true})
     cy.contains('Refresh').click()
 
     //cy.contains('netconf-testtool').parent().find('td').eq(0).click()
-    //cy.contains('Unmount Devices').click()	  
+    //cy.contains('Unmount Devices').click()
     //cy.get('table tbody tr').should('not.to.exist')
   })
 })
