@@ -1,9 +1,13 @@
 //https://docs.frinx.io/frinx-machine/use-cases/create-loopback-and-read-journal/create-loopback-and-read-journal.html#running-the-workflow-for-retrieving-the-journal-of-a-device
 //Running the workflow for retrieving the journal of a device
 describe('Retrieve journal of a device', function() {
+  beforeEach(function() {
+    cy.login()
+  })
+	
   it('retrieves journal for XR02', function() {
 //http://localhost:3000/
-    cy.visit('http://localhost:3000/')
+    cy.visit('/')
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
     //cy.get('table tbody tr').first().find('td').eq(1).val().should('contain','XR02')
@@ -93,9 +97,10 @@ describe('Retrieve journal of a device', function() {
 
 
 
+	
   it('retrieves journal for IOS01', function() {
 //http://localhost:3000/
-    cy.visit('http://localhost:3000/')
+    cy.visit('/')
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
     //cy.get('table tbody tr').first().find('td').eq(1).val().should('contain','XR02')

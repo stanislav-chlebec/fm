@@ -1,10 +1,12 @@
 describe('Create loopback address on devices stored in the inventory', function() { 
-  before(function() {
+  beforeEach(function() {
+    cy.login()
+
     //Make sure you didn’t skip mounting all devices in inventory, otherwise this workflow might not work correctly.
     //
     //This use case does not work with VRP01 and netconf-testtool devices. 
 	  
-    cy.visit('http://localhost:3000') 
+    cy.visit('/') 
     cy.contains('UniConfig').click()	  
     cy.contains('VRP01').parent().find('td').eq(0).click()
     cy.contains('netconf-testtool').parent().find('td').eq(0).click()
@@ -16,7 +18,7 @@ describe('Create loopback address on devices stored in the inventory', function(
 
 	
   it('creates loopback700929 on all mounted devices', function() { 
-    cy.visit('http://localhost:3000') 
+    cy.visit('/') 
 
     cy.contains('UniConfig').click() //look list of mounted devices  
 

@@ -1,8 +1,12 @@
 describe('Mount devices from UniConfig', function() {
+  beforeEach(function() {
+    cy.login()
+  })
+
   //this test is run immediatelly after starting of frinx machine
   //no device is mounted
   it('Mount cli device', function() {
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.contains('UniConfig').click()
 
     cy.url().should('include', '/devices')
@@ -101,7 +105,7 @@ describe('Mount devices from UniConfig', function() {
   })
 
   it('Mount netconf device', function() {
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
 

@@ -2,10 +2,14 @@
 //Obtain LLDP topology data
 //Collect LLDP Information from Devices and Build Topology
 describe('Collect LLDP Information from Devices and Build Topology', function() {
+  beforeEach(function() {
+    cy.login()
+  })
+	
 
   it('collects LLDP Information from Devices', function() {
     //In the following step we will start a workflow that goes to each mounted device, collects LLDP information, reconciles that information and finally stores that information in the inventory.
-    cy.visit('http://localhost:3000/')
+    cy.visit('/')
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
 
@@ -91,7 +95,7 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
 
   it('goes to inventory', function() {
     //After the workflow has completed, go to Kibana and look for an entry called “lldp”. 
-    cy.visit('http://localhost:5601/')
+    cy.visit(':5601/')
     cy.wait(5000)
     cy.contains('Discover').click()	  
     cy.get('div.ui-select-match > span > i.caret.pull-right').click({force:true})
@@ -106,7 +110,7 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
   var txt
   it('exports the IETF topology information in graphviz format', function() {
     //Exporting the IETF topology information in graphviz format
-    cy.visit('http://localhost:3000/')
+    cy.visit('/')
     cy.contains('Workflows').click()	  
     cy.url().should('include', '/workflows/defs')
     cy.contains('Definitions').click() //there are three tabs: Definitions Executed and Scheduled

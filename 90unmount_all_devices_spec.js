@@ -1,6 +1,10 @@
 describe('Unmount all mounted devices', function() { 
+  beforeEach(function() {
+    cy.login()
+  })
+	
   it('unmounts all devices', function() { 
-    cy.visit('http://localhost:3000') 
+    cy.visit('/') 
     cy.contains('UniConfig').click()	  
     //cy.contains('Refresh').click()
     //cy.get('table tbody tr td:first-child',{timeout:"10000"}).click({multiple:true})

@@ -1,10 +1,12 @@
 describe('Mount all devices from inventory', function() { 
-  before(function() {
+  beforeEach(function() {
+    cy.login()
+
     cy.unmount_all_devices()
   })
 	
   it('mounts all devices from inventory', function() { 
-    cy.visit('http://localhost:3000') 
+    cy.visit('/') 
 
     cy.contains('UniConfig').click()	  
     cy.get('table tbody tr').should('not.to.exist')

@@ -2,9 +2,13 @@
 //Obtain platform inventory data
 //Collect platform information from the device and store in the inventory
 describe('Collect platform information from the device and store in the inventory', function() {
+  beforeEach(function() {
+    cy.login()
+  })
+	
 
   it('go', function() {
-    cy.visit('http://localhost:3000/')
+    cy.visit('/')
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
 
@@ -40,7 +44,7 @@ describe('Collect platform information from the device and store in the inventor
 
   it('goes to inventory', function() {
     //After the workflow has completed, go to Kibana and look for an entry called “lldp”. 
-    cy.visit('http://localhost:5601/')
+    cy.visit(':5601/')
     cy.wait(5000)
     cy.contains('Discover').click()	  
     //cy.get('div.ui-select-match > span > i.caret.pull-right').click({force:true})

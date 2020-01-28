@@ -1,8 +1,12 @@
 //https://docs.frinx.io/frinx-machine/use-cases/lacp/lacp.html
 //This workflow is using uniconfig to create LAG interface on two nodes and assigns the bundle id to given interfaces on both nodes.
 describe('LACP workflows', function() {
+  beforeEach(function() {
+    cy.login()
+  })
+	
   it('checks if ios-xr devices are mounted', function() {
-    cy.visit('http://localhost:3000/')
+    cy.visit('/')
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
     //cy.get('table tbody tr').first().find('td').eq(1).val().should('contain','XR02')
