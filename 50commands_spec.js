@@ -1,6 +1,7 @@
 //https://docs.frinx.io/frinx-machine/use-cases/save-and-run-command/save-and-run-command.html
 //Save and execute commands on devices
 describe('Save and execute commands on devices', function() {
+  context('avoid of executing beforeEach with kibana', () => {
   beforeEach(function() {
     cy.login()
   })
@@ -42,12 +43,16 @@ describe('Save and execute commands on devices', function() {
     cy.contains('Close').click()
 
   })
+  })
 
+  context('executing kibana', () => {
   it('goes to inventory', function() {
     //After the workflow has completed, go to Kibana and look for an entry called “lldp”. 
-    cy.visit(':5601/')
-    cy.wait(5000)
-    cy.contains('Discover').click()	  
+    let inventory = Cypress.env('inventory')
+    cy.visit(inventory)
+    cy.url({timeout:5000}).should('include', '/app/')
+    //cy.wait(5000)
+    cy.contains('Discover',{timeout:10000}).click()
     //cy.get('div.ui-select-match > span > i.caret.pull-right').click({force:true})
     cy.get('i.caret.pull-right').click({force:true})
     cy.contains('inventory-show_cmd').click({force:true})
@@ -56,7 +61,13 @@ describe('Save and execute commands on devices', function() {
     cy.get('td').click({force:true,multiple:true})
     cy.get("dd span").contains('show_command').scrollIntoView()
   })
+  })
 
+  context('avoid of executing beforeEach with kibana', () => {
+  beforeEach(function() {
+    cy.login()
+  })
+	
   it('Execute saved command on mounted devices', function() {
     //In our example we will use Execute_and_read_rpc_cli_device_from_inventory which will execute a command from inventory on one device without saving the output of this command to inventory.
     cy.visit('/')
@@ -99,5 +110,6 @@ describe('Save and execute commands on devices', function() {
     cy.get('div.headerInfo').contains('COMPLETED')
     cy.contains('Close').click()
 
+  })
   })
 })

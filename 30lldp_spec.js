@@ -2,6 +2,8 @@
 //Obtain LLDP topology data
 //Collect LLDP Information from Devices and Build Topology
 describe('Collect LLDP Information from Devices and Build Topology', function() {
+  context('avoid of executing beforeEach with kibana', () => {
+
   beforeEach(function() {
     cy.login()
   })
@@ -69,7 +71,9 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
 
     cy.contains('Close').click()
   })
+  })
 
+  context('executing kibana', () => {
   it.skip('goes to inventory (via iframe)', function() {
     //After the workflow has completed, go to Kibana and look for an entry called “lldp”. 
     cy.get('.navbar-brand').click()	  
@@ -95,18 +99,28 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
 
   it('goes to inventory', function() {
     //After the workflow has completed, go to Kibana and look for an entry called “lldp”. 
-    cy.visit(':5601/')
-    cy.wait(5000)
-    cy.contains('Discover').click()	  
+    let inventory = Cypress.env('inventory')
+    cy.visit(inventory)
+    cy.url({timeout:5000}).should('include', '/app/')
+    //cy.wait(5000)
+    cy.contains('Discover',{timeout:10000}).click()
     cy.get('div.ui-select-match > span > i.caret.pull-right').click({force:true})
-    cy.contains('*lldp').click({force:true})
+    //cy.contains('*lldp').click({force:true})
+    cy.contains('inventory-lldp').click({force:true})
     //cy.get('input[type="search"]').type('*lldp',{force:true})
     //cy.get('div.kbnGlobalNavLink__title').click()
     //cy.get('div.iframes-container').click()
     //  doc.find('div.kbnGlobalNav__links > div > app-switcher > div.kbnGlobalNavLink > a').click(() => {
     cy.wait(5000)
   })
+  })
 
+  context('avoid of executing beforeEach with kibana', () => {
+
+  beforeEach(function() {
+    cy.login()
+  })
+	
   var txt
   it('exports the IETF topology information in graphviz format', function() {
     //Exporting the IETF topology information in graphviz format
@@ -154,7 +168,9 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
 
     cy.contains('Close').click()
   })
+  })
 
+  context('executing GraphvizOnline', () => {
   it('goes to 3rd party visualization tool', function() {
     //Finally you can use any 3rd party visualization tool that can support the graphviz format like https://dreampuf.github.io/GraphvizOnline.
     cy.visit('https://dreampuf.github.io/GraphvizOnline')
@@ -167,5 +183,6 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
       console.log(json.export.output.export)
       cy.get('textarea.ace_text-input').invoke('show').type(json.export.output.export.replace(/\\n/g, ''),{force:true})
     })
+  })
   })
 })

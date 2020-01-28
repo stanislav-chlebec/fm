@@ -2,6 +2,7 @@
 //Obtain platform inventory data
 //Collect platform information from the device and store in the inventory
 describe('Collect platform information from the device and store in the inventory', function() {
+  context('avoid of executing beforeEach with kibana', () => {
   beforeEach(function() {
     cy.login()
   })
@@ -41,15 +42,20 @@ describe('Collect platform information from the device and store in the inventor
     cy.screenshot() 
     cy.contains('Close').click()
   })
+  })
 
+  context('executing kibana', () => {
   it('goes to inventory', function() {
     //After the workflow has completed, go to Kibana and look for an entry called “lldp”. 
-    cy.visit(':5601/')
-    cy.wait(5000)
-    cy.contains('Discover').click()	  
+    let inventory = Cypress.env('inventory')
+    cy.visit(inventory)
+    //cy.wait(5000)
+    //cy.contains('Discover').click()	  
+    cy.contains('Discover',{timeout:10000}).click()
     //cy.get('div.ui-select-match > span > i.caret.pull-right').click({force:true})
     cy.get('i.caret.pull-right').click({force:true})
-    cy.contains('inventory-device*').click({force:true})
+    //cy.contains('inventory-device*').click({force:true})
+    cy.contains('inventory-device').click({force:true})
     cy.wait(5000)
     cy.contains('Discover').click()	  
     //cy.get('button.kbnDocTableOpen__button').click({multiple:true})
@@ -62,6 +68,7 @@ describe('Collect platform information from the device and store in the inventor
     //cy.get('div.iframes-container').click()
     //  doc.find('div.kbnGlobalNav__links > div > app-switcher > div.kbnGlobalNavLink > a').click(() => {
     cy.get("dd span").contains('XR01').scrollIntoView()
+  })
   })
 
 })
