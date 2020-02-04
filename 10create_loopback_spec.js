@@ -30,10 +30,15 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.contains('Create_loopback_all_in_uniconfig').click()	  
     cy.contains('Input').click()	  
     cy.contains('loopback_id').parent().find('input').type('700929') //it should be random generated maybe
-    cy.get('div.modal-content').contains('Execute').click()	  
+
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/api/conductor/workflow').as('getWorkflowId')
+    cy.get('div.modal-content').contains('Execute').click()
+    cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
-    cy.wait(5000) //wait for propagating to server and back
     cy.get('div.modal-footer a:first-child').click() //click generated workflow id
 
     cy.url().should('include', '/workflows/exec')	  
@@ -54,51 +59,33 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.get('div.heightWrapper').scrollTo('bottom', { duration: 2000 })
 
     cy.contains('Input/Output').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('JSON').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('Edit & Rerun').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('Execution Flow').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
 
 
     cy.contains('Parent').click()
 
-    cy.wait(5000)
     //return to previous
     cy.contains('Details of Create_loopback_all_in_uniconfig')
     cy.contains('Children').click()
-    cy.wait(5000)
 	  
     cy.get('div.headerInfo').contains('COMPLETED',{timeout:300000})
     //cy.get('#detailTabs-tabpane-taskDetails').get('tbody tr td:last').should('have.length',2)  ///.contains('COMPLETED',{timeout:300000})
 
 
     cy.contains('Input/Output').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('JSON').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('Edit & Rerun').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('Execution Flow').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
 
     cy.contains('Close').click()
     cy.get('span.navbar-brand a').click()

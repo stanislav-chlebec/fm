@@ -18,14 +18,17 @@ describe('Mount all devices from inventory', function() {
     cy.get ('input[placeholder="Search by keyword."').type('Mount_all_from_inventory')	  
     cy.contains('Mount_all_from_inventory').click()	  
     cy.contains('Input').click()	  
-    cy.get('div.modal-content').contains('Execute').click()	  
+
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/api/conductor/workflow').as('getWorkflowId')
+    cy.get('div.modal-content').contains('Execute').click()
+    cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
-    cy.wait(5000)
     cy.get('div.modal-footer a:first-child').click()
-
     cy.url().should('include', '/workflows/exec')	  
-    cy.wait(5000)
     cy.contains('Children').click()
     cy.contains('Details of Mount_all_from_inventory')
     //cy.get('div.modal-content table tbody tr').should('have.length',2)
@@ -35,21 +38,13 @@ describe('Mount all devices from inventory', function() {
 
 
     cy.contains('Input/Output').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('JSON').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('Edit & Rerun').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
     cy.contains('Execution Flow').click()
-    cy.wait(5000)
     cy.contains('Task Details').click()
-    cy.wait(5000)
 
     cy.contains('Close').click()
     cy.get('span.navbar-brand a').click()
