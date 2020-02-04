@@ -27,14 +27,18 @@ describe('Mount all devices from inventory', function() {
     cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
+
+    cy.server({
+      method: 'GET',
+    })
+    cy.route('/api/conductor/id/*').as('getWorkflowDetail')
     cy.get('div.modal-footer a:first-child').click()
     cy.url().should('include', '/workflows/exec')	  
-    cy.contains('Children').click()
+
+    cy.wait('@getWorkflowDetail')
     cy.contains('Details of Mount_all_from_inventory')
-    //cy.get('div.modal-content table tbody tr').should('have.length',2)
-    //cy.get('#detailTabs-tabpane-taskDetails').get('tbody tr td:last').should('have.length',2)  ///.contains('COMPLETED',{timeout:300000})
-    cy.get('div.headerInfo').contains('COMPLETED',{timeout:300000})
-    //cy.get('#detailTabs-tabpane-taskDetails').get('tbody tr td:last').should('have.length',2)  ///.contains('COMPLETED',{timeout:300000})
+    cy.get('div.headerInfo').contains('COMPLETED',{timeout:30000})
+    cy.contains('Children').click()
 
 
     cy.contains('Input/Output').click()
@@ -50,6 +54,5 @@ describe('Mount all devices from inventory', function() {
     cy.get('span.navbar-brand a').click()
 
     cy.contains('UniConfig').click()	  
-    cy.get('table tbody tr').should('have.length',2)
   })
 })

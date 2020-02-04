@@ -5,7 +5,7 @@ describe('Mount devices from UniConfig', function() {
 
   //this test is run immediatelly after starting of frinx machine
   //no device is mounted
-  it('Mount cli device', function() {
+  it('Mount cli device with toggle bug workaround', function() {
     cy.visit('/')
     cy.contains('UniConfig').click()
 
@@ -38,7 +38,7 @@ describe('Mount devices from UniConfig', function() {
       .click()
 
     //second click to toggle back to ssh
-    //BUG workaroung
+    //BUG workaround
     //TODO temove this later
     cy.get('label[for="mountcliInput-transport-type"] ~ div[class="Dropdown-root"] > div[class="Dropdown-control"] > div[class="Dropdown-arrow-wrapper"] > span')
       .click()
@@ -114,7 +114,7 @@ describe('Mount devices from UniConfig', function() {
 
     cy.contains('Netconf').click()
     // this does not work - why ??? cy.contains('Basic').click()
-    //cy.get('div.tab-content').contains('Basic', {force:true}).click()// nefunguje lebo najde prvy Basic na prvom paneli ktory je hidded
+    //cy.get('div.tab-content').contains('Basic', {force:true}).click()// nefunguje lebo najde prvy Basic na prvom paneli ktory je hidden
     cy.get('#mountTabs-tabpane-Netconf').contains('Basic').click()
 
     cy.get('#mountnetconfInput-node-id')
