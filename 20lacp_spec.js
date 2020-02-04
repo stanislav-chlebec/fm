@@ -49,10 +49,14 @@ describe('LACP workflows', function() {
     cy.get('@node2_ifaces').type('{selectall}{backspace}')
     cy.get('@node2_ifaces').type('GigabitEthernet0/0/0/1, GigabitEthernet0/0/0/2, GigabitEthernet0/0/0/3')
 
-    cy.get('div.modal-content').contains('Execute').click()	  
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/api/conductor/workflow').as('getWorkflowId')
+    cy.get('div.modal-content').contains('Execute').click()
+    cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
-    cy.wait(1000) //wait for propagating to server and back
     //click the ID of the previously executed workflow to see the progress of the workflow
     cy.get('div.modal-footer a:first-child').click() //click generated workflow id
 
@@ -73,7 +77,6 @@ describe('LACP workflows', function() {
 
     cy.contains('Execution Flow').click()
     cy.contains('Close').scrollIntoView()
-    cy.wait(10000)
     cy.get('div.headerInfo').contains('COMPLETED')
 
     //cy.get('#detailTabs-tabpane-execFlow').scrollIntoView()

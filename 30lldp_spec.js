@@ -56,10 +56,14 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
     cy.get('@destination_topology').type('{selectall}{backspace}')
     cy.get('@destination_topology').type('lldp')
 
-    cy.get('div.modal-content').contains('Execute').click()	  
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/api/conductor/workflow').as('getWorkflowId')
+    cy.get('div.modal-content').contains('Execute').click()
+    cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
-    cy.wait(1000) //wait for propagating to server and back
     //click the ID of the previously executed workflow to see the progress of the workflow
     cy.get('div.modal-footer a:first-child').click() //click generated workflow id
 
