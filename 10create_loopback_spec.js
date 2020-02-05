@@ -18,6 +18,11 @@ describe('Create loopback address on devices stored in the inventory', function(
 
 	
   it('creates loopback700929 on all mounted devices', function() { 
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/api/conductor/workflow').as('getWorkflowId')
+
     cy.visit('/') 
 
     cy.contains('UniConfig').click() //look list of mounted devices  
@@ -31,19 +36,19 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.contains('Input').click()	  
     cy.contains('loopback_id').parent().find('input').type('700929') //it should be random generated maybe
 
-    cy.server({
-      method: 'POST',
-    })
-    cy.route('/api/conductor/workflow').as('getWorkflowId')
     cy.get('div.modal-content').contains('Execute').click()
     cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
-    cy.get('div.modal-footer a:first-child').click() //click generated workflow id
+    //this explicit wait is needed to wait for completing of procesing on chain ConductorServer<->ElasticSearch<->Dyn
+    cy.wait(3000)
+    //hopufully now we are ready to go - let us click the workflow id link
+    cy.get('div.modal-footer a:first-child').click()
 
     cy.url().should('include', '/workflows/exec')	  
-    cy.wait(5000) //wait for finishing xhrs
-    cy.contains('Details of Create_loopback_all_in_uniconfig')
+    cy.get('div.modal-header').contains('Details of Create_loopback_all_in_uniconfig',{timeout:30000})
+    //cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
+	  
     //here there are some problem with visibility of table ...
     //cy.get('div.modal-content table tbody tr').should('have.length',2)
     //cy.get('#detailTabs-tabpane-taskDetails').get('tbody tr td:last').should('have.length',2)  ///.contains('COMPLETED',{timeout:300000})
@@ -53,20 +58,16 @@ describe('Create loopback address on devices stored in the inventory', function(
     //cy.contains('create_loopback').click({force:true}) //this did not work
     //cy.contains('Children').click().get('a') // neither worked
 
-    cy.wait(5000)
+    //cy.wait(5000)
     cy.contains('Details of Dynamic_fork')
     cy.get('div.headerInfo').contains('COMPLETED',{timeout:300000})
-    cy.get('div.heightWrapper').scrollTo('bottom', { duration: 2000 })
+    cy.get('div.heightWrapper').scrollTo('bottom', { duration: 1000 })
 
     cy.contains('Input/Output').click()
-    cy.contains('Task Details').click()
     cy.contains('JSON').click()
-    cy.contains('Task Details').click()
     cy.contains('Edit & Rerun').click()
-    cy.contains('Task Details').click()
     cy.contains('Execution Flow').click()
     cy.contains('Task Details').click()
-
 
     cy.contains('Parent').click()
 
@@ -75,15 +76,10 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.contains('Children').click()
 	  
     cy.get('div.headerInfo').contains('COMPLETED',{timeout:300000})
-    //cy.get('#detailTabs-tabpane-taskDetails').get('tbody tr td:last').should('have.length',2)  ///.contains('COMPLETED',{timeout:300000})
-
 
     cy.contains('Input/Output').click()
-    cy.contains('Task Details').click()
     cy.contains('JSON').click()
-    cy.contains('Task Details').click()
     cy.contains('Edit & Rerun').click()
-    cy.contains('Task Details').click()
     cy.contains('Execution Flow').click()
     cy.contains('Task Details').click()
 
@@ -91,18 +87,8 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.get('span.navbar-brand a').click()
 
     cy.contains('UniConfig').click()	  
-    //cy.get('table tbody tr').should('have.length',2)
- /*   cy.wait(5000)
-    cy.contains('XR02').parent().find('td').eq(5).click()
-    cy.url().should('include', '/devices/edit/XR02')	  
-	cy.get('div.operational').scrollIntoView()
-        cy.wait(5000)
-	cy.get('div.operational div.CodeMirror-vscrollbar').scrollTo('bottom', { duration: 2000 })
-	cy.get(':contains(700929)').first().scrollIntoView()
-	cy.go(-1)
-    //cy.get('button[class~="round"]').click({force:true})
-*/
 
+    cy.get('table tbody tr:nth-child(8)').should('to.exist')
     //	  After the main and sub-workflows have completed successfully the loopback addres was created on the devices. Since we are working with emulated devices, we can check a device journal to see if it was really created.
 
   })

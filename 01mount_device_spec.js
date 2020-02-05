@@ -79,7 +79,8 @@ describe('Mount devices from UniConfig', function() {
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
 
-    cy.get('table tbody tr').should('have.length',1)
+    //cy.get('table tbody tr').should('have.length',1)
+    cy.get('table tbody tr').should('to.exist')
     cy.contains('XR01').click()
 
     cy.get('div.modal-dialog.modal-lg')
@@ -159,7 +160,8 @@ describe('Mount devices from UniConfig', function() {
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
 
-    //cy.get('table tbody tr').should('have.length',1)
+    //cy.get('table tbody tr').should('have.length',2)
+    cy.get('table tbody tr').should('to.exist')
     cy.contains('netconf-testtool').click()
 
     cy.get('div.modal-dialog.modal-lg')
