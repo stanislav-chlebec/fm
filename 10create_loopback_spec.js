@@ -13,7 +13,6 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.contains('Unmount Devices').click()	  
     cy.contains('VRP01').should('not.to.exist')
     cy.contains('netconf-testtool').should('not.to.exist')
-  
   })
 
 	
@@ -26,6 +25,7 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.visit('/') 
 
     cy.contains('UniConfig').click() //look list of mounted devices  
+    cy.get('table tbody tr:nth-child(8)').should('to.exist')
 
     cy.get('.navbar-brand').click()	  
     cy.contains('Workflows').click()	  
@@ -47,6 +47,7 @@ describe('Create loopback address on devices stored in the inventory', function(
 
     cy.url().should('include', '/workflows/exec')	  
     cy.get('div.modal-header').contains('Details of Create_loopback_all_in_uniconfig',{timeout:30000})
+    cy.contains('Close').scrollIntoView()
     //cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
 	  
     //here there are some problem with visibility of table ...
@@ -60,6 +61,7 @@ describe('Create loopback address on devices stored in the inventory', function(
 
     //cy.wait(5000)
     cy.contains('Details of Dynamic_fork')
+    cy.contains('Close').scrollIntoView()
     cy.get('div.headerInfo').contains('COMPLETED',{timeout:300000})
     cy.get('div.heightWrapper').scrollTo('bottom', { duration: 1000 })
 
@@ -67,6 +69,7 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.contains('JSON').click()
     cy.contains('Edit & Rerun').click()
     cy.contains('Execution Flow').click()
+    cy.get('#detailTabs-tabpane-execFlow > div').scrollTo('bottomRight', { duration: 1000 })
     cy.contains('Task Details').click()
 
     cy.contains('Parent').click()
@@ -89,6 +92,7 @@ describe('Create loopback address on devices stored in the inventory', function(
     cy.contains('UniConfig').click()	  
 
     cy.get('table tbody tr:nth-child(8)').should('to.exist')
+	  	  
     //	  After the main and sub-workflows have completed successfully the loopback addres was created on the devices. Since we are working with emulated devices, we can check a device journal to see if it was really created.
 
   })
