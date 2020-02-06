@@ -52,6 +52,7 @@ describe('Mount all devices from inventory', function() {
     cy.url().should('include', '/workflows/exec')	  
     //here should be a wait but I did not succeed with waiting for xhr
     cy.get('div.modal-header').contains('Details of Mount_all_from_inventory',{timeout:30000})
+    cy.contains('Close').scrollIntoView()
     cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
 
     cy.contains('Children').click()
