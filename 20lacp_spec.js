@@ -7,17 +7,23 @@ describe('LACP workflows', function() {
 	
   it('checks if ios-xr devices are mounted', function() {
     cy.visit('/')
+
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
-    //cy.get('table tbody tr').first().find('td').eq(1).val().should('contain','XR02')
+
+    cy.get('table tbody tr:nth-child(8)').should('to.exist')
     cy.get('table tbody tr').first().should('contain','ios xr')
     cy.get('table tbody tr').eq(1).should('contain','ios xr') //the second row
   })
 
   it('creating a link aggregation between two nodes', function() {
+    cy.server()
+    cy.route('POST', '/api/conductor/workflow').as('getWorkflowId')
+
     cy.get('.navbar-brand').click()	  
     cy.url().should('include', '/')
     cy.contains('Workflows').click()	  
+
     cy.url().should('include', '/workflows/defs')
     cy.contains('Definitions').click() //there are three tabs: Definitions Executed and Scheduled
     cy.get('input[placeholder="Search by keyword."').type('Link_aggregation')	  
@@ -49,45 +55,32 @@ describe('LACP workflows', function() {
     cy.get('@node2_ifaces').type('{selectall}{backspace}')
     cy.get('@node2_ifaces').type('GigabitEthernet0/0/0/1, GigabitEthernet0/0/0/2, GigabitEthernet0/0/0/3')
 
-    cy.server({
-      method: 'POST',
-    })
-    cy.route('/api/conductor/workflow').as('getWorkflowId')
     cy.get('div.modal-content').contains('Execute').click()
     cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
-    //click the ID of the previously executed workflow to see the progress of the workflow
-    cy.get('div.modal-footer a:first-child').click() //click generated workflow id
+    //this explicit wait is needed to wait for completing of procesing on chain ConductorServer<->ElasticSearch<->Dyn
+    cy.wait(1000)
+    //hopufully now we are ready to go - let us click the workflow id link
+    cy.get('div.modal-footer a:first-child').click() //click the ID of the previously executed workflow to see the progress of the workflow
 
     cy.url().should('include', '/workflows/exec')	  
-    cy.contains('Details of Link_aggregation')
-
-    //cy.contains('Task Details').click()
-    //cy.contains('Input/Output').click()
-    //The journal information can be found in the output of the workflow
-    //cy.contains('Workflow Output').parent().contains('Unescape').click()
-    //cy.scrollTo('bottom') // this does not work failed because this element is not scrollable <window>
-    //search for interface Loopback700929
-    //cy.contains('Workflow Output').parent().find('code').invoke('show').should('contain','interface Loopback700929') //problem element code is not visible
-    //Workflow Output  parent() is h4 ... > button with text Escape 
-    //cy.contains('Workflow Output').parent().contains('Escape').click()
-    //cy.contains('JSON').click()
-    //cy.contains('Edit & Rerun').click()
+    cy.get('div.modal-header').contains('Details of Link_aggregation',{timeout:3000})
+    //cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
+    //instead of waiting to COMPLETED try to examine process running e.g. on Execution Flow tab
 
     cy.contains('Execution Flow').click()
-    cy.contains('Close').scrollIntoView()
-    cy.get('div.headerInfo').contains('COMPLETED')
+    cy.get('div[role="dialog"]').scrollTo('bottom', { duration: 1000 })
+    cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
 
-    //cy.get('#detailTabs-tabpane-execFlow').scrollIntoView()
-    //cy.contains('final').scrollIntoView()
-    cy.get('div[role="dialog"]').scrollTo('center', { duration: 5000 })
-    cy.get('div[role="dialog"]').scrollTo('bottom', { duration: 5000 })
-    cy.get('#detailTabs-tabpane-execFlow > div').scrollTo('bottomRight', { duration: 5000 })
-    cy.get('#detailTabs-tabpane-execFlow > div').scrollTo('bottomLeft', { duration: 5000 })
+    cy.get('div[role="dialog"]').scrollTo('center', { duration: 1000 })
+    cy.get('div[role="dialog"]').scrollTo('bottom', { duration: 1000 })
+    cy.get('#detailTabs-tabpane-execFlow > div').scrollTo('bottomRight', { duration: 1000 })
+    //cy.get('#detailTabs-tabpane-execFlow > div').scrollTo('bottomLeft', { duration: 1000 })
     //cy.get('#detailTabs-tabpane-execFlow > div').scrollTo('75%', '25%')
     //does not work cy.get('div.overflow.scroll').scrollTo('bottom', { duration: 5000 })
 
+    cy.contains('Close').scrollIntoView()
     cy.contains('Close').click()
   })
 })
