@@ -44,6 +44,8 @@ describe('Save and execute commands on devices', function() {
     cy.get('#detailTabs-tabpane-execFlow').scrollIntoView()
     cy.wait(500) //wait - this element is detached from the DOM. - wait until attached 
     cy.get('g > rect').click()
+    cy.get('div[role="document"].modal-lg > div.modal-content > div.modal-body').scrollTo('bottom',{duration:500})
+    cy.get('div[role="document"].modal-lg > div.modal-content > div.modal-body > div > div > div > div.row').eq(4).scrollIntoView()
     cy.contains('Summary').click()
     //TODO scroll to bottom
     //cy.get('div.modal-body').last().scrollTo('bottom', { duration: 1000 })

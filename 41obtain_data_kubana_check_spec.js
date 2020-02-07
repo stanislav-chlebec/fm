@@ -3,6 +3,11 @@
 //Collect platform information from the device and store in the inventory
 describe('Collect platform information from the device and store in the inventory', function() {
   it('goes to inventory', function() {
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/elasticsearch/_msearch?rest_total_hits_as_int=true&ignore_throttled=true').as('getSearchResults')
+	  
     //After the workflow has completed, go to Kibana and look for an entry called “inventory-device”. 
     let inventory = Cypress.env('inventory')
     cy.visit(inventory)
@@ -13,7 +18,9 @@ describe('Collect platform information from the device and store in the inventor
     cy.get('i.caret.pull-right').click({force:true})
     //cy.contains('inventory-device*').click({force:true})
     cy.contains('inventory-device').click({force:true})
-    cy.contains('Discover').click()	  
+    cy.wait('@getSearchResults')
+    //explicit wait
+    cy.wait(500)
 	  
     //cy.get('button.kbnDocTableOpen__button').click({multiple:true})
     //cy.get('td[ng-click="toggleRow()"]').click({multiple:true})

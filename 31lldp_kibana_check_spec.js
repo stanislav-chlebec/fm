@@ -26,6 +26,11 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
   })
 
   it('goes to inventory', function() {
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/elasticsearch/_msearch?rest_total_hits_as_int=true&ignore_throttled=true').as('getSearchResults')
+	  
     let inventory = Cypress.env('inventory')
     cy.visit(inventory)
     cy.url({timeout:5000}).should('include', '/app/')
@@ -33,5 +38,10 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
     cy.get('div.ui-select-match > span > i.caret.pull-right').click({force:true})
     //cy.contains('*lldp').click({force:true})
     cy.contains('inventory-lldp').click({force:true})
+    cy.wait('@getSearchResults')
+    //explicit wait
+    cy.wait(500)
+    cy.get('td').click({force:true,multiple:true})
+    cy.get("dd span").contains('lldp').scrollIntoView()
   })
 })
