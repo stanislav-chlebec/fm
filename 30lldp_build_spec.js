@@ -73,6 +73,16 @@ describe('Collect LLDP Information from Devices and Build Topology', function() 
     cy.get('div.modal-header').contains('Details of Build_read_store_LLDP_topology',{timeout:3000})
     cy.contains('Close').scrollIntoView()
     cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
+
+    cy.contains('Execution Flow').click()
+    //click on the green box with the CLI_get_cli_journal text.
+    cy.get('#detailTabs-tabpane-execFlow').scrollIntoView()
+    cy.wait(500) //wait - this element is detached from the DOM. - wait until attached 
+    cy.get('g > rect').click()
+    cy.contains('Build_read_store_LLDP_topology (COMPLETED)')
+    cy.contains('Summary').click()
+
+    cy.contains('Close').scrollIntoView()
     cy.contains('Close').click()
   })
 })
