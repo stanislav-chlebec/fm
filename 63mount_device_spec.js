@@ -19,7 +19,7 @@ describe('Mount the new device from Inventory', function() {
     cy.contains('Definitions').click() //there are three tabs: Definitions Executed and Scheduled
     cy.get('input[placeholder="Search by keyword."').type('Mount_from_inventory')	  
     cy.contains('Mount_from_inventory').click()	  
-    cy.contains('Input').click()	  
+    cy.get('button').contains('Execute').click()	  
 
     var device_id='BIG_ONE_ROUTER' //: any unique identifier
     cy.get('label').contains('device_id').next().as('device_id') //label  become alias of next input
@@ -69,7 +69,7 @@ describe('Mount the new device from Inventory', function() {
     cy.contains('Definitions').click() //there are three tabs: Definitions Executed and Scheduled
     cy.get('input[placeholder="Search by keyword."').type('Add_netconf_device_to_inventory')	  
     cy.contains('Add_netconf_device_to_inventory').click()	  
-    cy.contains('Input').click()	  
+    cy.get('button').contains('Execute').click()	  
 
     var device_id='GREATER_ONE_ROUTER' //: any unique identifier
     var port='1783' //: port to connect to

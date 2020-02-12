@@ -28,7 +28,7 @@ describe('Retrieve journal of a device', function() {
     cy.contains('Definitions').click() //there are three tabs: Definitions Executed and Scheduled
     cy.get('input[placeholder="Search by keyword."').type('Read_journal_cli_device')	  
     cy.contains('Read_journal_cli_device').click()	  
-    cy.contains('Input').click()	  
+    cy.get('button').contains('Execute').click()	  
 	  
     //label device_id
     //this is input with autocompletion	  
@@ -132,7 +132,7 @@ describe('Retrieve journal of a device', function() {
     cy.contains('Definitions').click() //there are three tabs: Definitions Executed and Scheduled
     cy.get('input[placeholder="Search by keyword."').type('Read_journal_cli_device')	  
     cy.contains('Read_journal_cli_device').click()	  
-    cy.contains('Input').click()	  
+    cy.get('button').contains('Execute').click()	  
 	  
     //label device_id
     //this is input with autocompletion	  

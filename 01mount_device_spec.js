@@ -3,15 +3,21 @@ describe('Mount devices from UniConfig', function() {
     cy.login()
   })
 
-  //this test is run immediatelly after starting of frinx machine
-  //no device is mounted
-  it('Mount cli device with toggle bug workaround', function() {
+  //OPTIONAL: this test is run immediatelly after starting of frinx machine
+  //OPTIONAL: no device is mounted
+  var cliDev='XR01'
+  it('Mount cli device ' + cliDev + '  with toggle bug workaround', function() {
+    cy.server({
+      method: 'GET',
+    })
+    cy.route('/api/odl/conf/uniconfig/' + cliDev).as('getConfig')
+
     cy.visit('/')
     cy.contains('UniConfig').click()
 
     cy.url().should('include', '/devices')
 
-    cy.get('table tbody tr').should('not.to.exist')
+    //cy.get('table tbody tr').should('not.to.exist')
     cy.contains('Mount Device').click()
 
     cy.contains('CLI').click()
@@ -19,8 +25,8 @@ describe('Mount devices from UniConfig', function() {
 
     cy.get('#mountcliInput-node-id')
       .clear()
-      .type('XR01')
-      .should('have.value', 'XR01')
+      .type(cliDev)
+      .should('have.value', cliDev)
 
     cy.get('#mountcliInput-host')
       .clear()
@@ -67,7 +73,6 @@ describe('Mount devices from UniConfig', function() {
     cy.get('#mountcliInput-password')
       .clear()
       .type('cisco')
-      .should('have.value', 'cisco')
 
     cy.get('button[class="btn btn-primary"]').contains('Mount Device')
       .then(($button) => {
@@ -81,7 +86,7 @@ describe('Mount devices from UniConfig', function() {
 
     //cy.get('table tbody tr').should('have.length',1)
     cy.get('table tbody tr').should('to.exist')
-    cy.contains('XR01').click()
+    cy.contains(cliDev).click()
 
     cy.get('div.modal-dialog.modal-lg')
     cy.contains('Basic').click()
@@ -93,10 +98,11 @@ describe('Mount devices from UniConfig', function() {
 
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
-    cy.contains('XR01').parent().find('td').eq(0).click()
-    cy.contains('XR01').parent().find('td').eq(0).click()
-    cy.contains('XR01').parent().find('td').eq(5).click()
-    cy.url().should('include', '/devices/edit/XR01')
+    cy.contains(cliDev).parent().find('td').eq(0).click()
+    cy.contains(cliDev).parent().find('td').eq(0).click()
+    cy.contains(cliDev).parent().find('td').eq(5).click()
+    cy.wait('@getConfig')
+    cy.url().should('include', '/devices/edit/' + cliDev)
     cy.get('button[class~="round"]').click({force:true})
     cy.contains('Refresh').click()
 
@@ -105,12 +111,17 @@ describe('Mount devices from UniConfig', function() {
     //cy.get('table tbody tr').should('not.to.exist')
   })
 
-  it('Mount netconf device', function() {
+  var netconfDev='netconf-testtool'
+  it('Mount netconf device ' + netconfDev, function() {
+    cy.server({
+      method: 'GET',
+    })
+    cy.route('/api/odl/conf/uniconfig/' + netconfDev).as('getConfig')
+
     cy.visit('/')
     cy.contains('UniConfig').click()
     cy.url().should('include', '/devices')
 
-    cy.get('table tbody tr').should('not.to.exist')
     cy.contains('Mount Device').click()
 
     cy.contains('Netconf').click()
@@ -120,8 +131,8 @@ describe('Mount devices from UniConfig', function() {
 
     cy.get('#mountnetconfInput-node-id')
       .clear()
-      .type('netconf-testtool')
-      .should('have.value', 'netconf-testtool')
+      .type(netconfDev)
+      .should('have.value', netconfDev)
 
     cy.get('#mountnetconfInput-host')
       .clear()
@@ -141,7 +152,6 @@ describe('Mount devices from UniConfig', function() {
     cy.get('#mountnetconfInput-password')
       .clear()
       .type('cisco')
-      .should('have.value', 'cisco')
 
     cy.get('#mountTabs-tabpane-Netconf').contains('Advanced').click()
     cy.contains('UniConfig Native').click()
@@ -162,7 +172,7 @@ describe('Mount devices from UniConfig', function() {
 
     //cy.get('table tbody tr').should('have.length',2)
     cy.get('table tbody tr').should('to.exist')
-    cy.contains('netconf-testtool').click()
+    cy.contains(netconfDev).click()
 
     cy.get('div.modal-dialog.modal-lg')
     cy.contains('Basic').click()
@@ -175,14 +185,15 @@ describe('Mount devices from UniConfig', function() {
 
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
-    cy.contains('netconf-testtool').parent().find('td').eq(0).click()
-    cy.contains('netconf-testtool').parent().find('td').eq(0).click()
-    cy.contains('netconf-testtool').parent().find('td').eq(5).click()
-    cy.url().should('include', '/devices/edit/netconf-testtool')
+    cy.contains(netconfDev).parent().find('td').eq(0).click()
+    cy.contains(netconfDev).parent().find('td').eq(0).click()
+    cy.contains(netconfDev).parent().find('td').eq(5).click()
+    cy.wait('@getConfig')
+    cy.url().should('include', '/devices/edit/' + netconfDev)
     cy.get('button[class~="round"]').click({force:true})
     cy.contains('Refresh').click()
 
-    //cy.contains('netconf-testtool').parent().find('td').eq(0).click()
+    //cy.contains(netconfDev).parent().find('td').eq(0).click()
     //cy.contains('Unmount Devices').click()
     //cy.get('table tbody tr').should('not.to.exist')
   })
