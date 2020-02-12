@@ -6,7 +6,7 @@ describe('Mount devices from UniConfig', function() {
   //OPTIONAL: this test is run immediatelly after starting of frinx machine
   //OPTIONAL: no device is mounted
   var cliDev='XR01'
-  it('Mount cli device ' + cliDev + '  with toggle bug workaround', function() {
+  it('Mount cli device ' + cliDev, function() {
     cy.server({
       method: 'GET',
     })
@@ -43,15 +43,6 @@ describe('Mount devices from UniConfig', function() {
     cy.get('div[class^="Dropdown-option"]').contains('ssh')
       .click()
 
-    //second click to toggle back to ssh
-    //BUG workaround
-    //TODO temove this later
-    cy.get('label[for="mountcliInput-transport-type"] ~ div[class="Dropdown-root"] > div[class="Dropdown-control"] > div[class="Dropdown-arrow-wrapper"] > span')
-      .click()
-    cy.get('div[class^="Dropdown-option"]').contains('ssh')
-      .click()
-
-
     cy.get('label[for="mountcliInput-transport-type"] ~ div[class="Dropdown-root"] > div[class="Dropdown-control"] > div[class="Dropdown-placeholder is-selected"]')
       .contains('ssh')
 
@@ -80,7 +71,7 @@ describe('Mount devices from UniConfig', function() {
       })
 
     cy.get('button[class="btn btn-primary"]').should('not.to.exist')
-    cy.get('button.btn.btn-success', { timeout : 10000  } ).should('contain','Connected')
+    cy.get('button.btn.btn-success', { timeout : 30000  } ).should('contain','Connected')
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
 
@@ -166,7 +157,7 @@ describe('Mount devices from UniConfig', function() {
       })
 
     cy.get('button[class="btn btn-primary"]').should('not.to.exist')
-    cy.get('button.btn.btn-success', { timeout : 10000  } ).should('contain','Connected')
+    cy.get('button.btn.btn-success', { timeout : 30000  } ).should('contain','Connected')
     cy.contains('Close').click()
     cy.get('div.modal-dialog.modal-lg').should('not.to.exist')
 

@@ -14,6 +14,8 @@ describe('Save and execute commands on devices', function() {
     cy.contains('Success! Your index pattern matches 1 index.')
     cy.contains('Next step',{timeout:10000}).click({force:true})
     cy.get('button[data-test-subj="createIndexPatternCreateButton"]').contains('Create index pattern',{timeout:10000}).click({force:true})
+    //explicit wait - occasionally I quit too quick - before successful creating of index !!!
+    cy.wait(500)
   })
 
   it('retrieves data', function() {
