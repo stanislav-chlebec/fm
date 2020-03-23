@@ -65,13 +65,13 @@ describe('LACP workflows', function() {
     cy.get('div.modal-footer a:first-child').click() //click the ID of the previously executed workflow to see the progress of the workflow
 
     cy.url().should('include', '/workflows/exec')	  
-    cy.get('div.modal-header').contains('Details of Link_aggregation',{timeout:3000})
+    cy.get('div.modal-header').contains('Details of Link_aggregation',{timeout:30000})
     //cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
     //instead of waiting to COMPLETED try to examine process running e.g. on Execution Flow tab
 
     cy.contains('Execution Flow').click()
     cy.get('div[role="dialog"]').scrollTo('bottom', { duration: 1000 })
-    cy.get('div.headerInfo').contains('COMPLETED',{timeout:200000})
+    cy.get('div.headerInfo').contains('COMPLETED',{timeout:40000})
 
     cy.get('div[role="dialog"]').scrollTo('center', { duration: 1000 })
     cy.get('div[role="dialog"]').scrollTo('bottom', { duration: 1000 })

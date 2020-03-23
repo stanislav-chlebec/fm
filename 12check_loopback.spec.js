@@ -10,15 +10,20 @@ describe('Retrieve journal of a device', function() {
       method: 'POST',
     })
     cy.route('/api/conductor/workflow').as('getWorkflowId')
+    cy.route('GET', '/api/odl/conf/status/cli/IOS01').as('getXR02')
 
     cy.visit('/')
 
     cy.contains('UniConfig').click()
+    cy.wait('@getXR02')
+    cy.wait('@getXR02')
 
     cy.url().should('include', '/devices')
-    cy.get('table tbody tr').first().find('td').eq(1).should('contain','XR02')
-    cy.get('td#node_id-0').contains('XR02')
+    //cy.get('table tbody tr').first().find('td').eq(1).should('contain','XR02')
+    //cy.get('td#node_id-0').contains('XR02')
     //TODO how to put it into variable?
+    cy.get('table tbody tr:nth-child(8)').should('to.exist')
+    cy.get('table tbody tr').contains('XR02')
 
     cy.get('.navbar-brand').click()	  
     cy.url().should('include', '/')
@@ -29,7 +34,7 @@ describe('Retrieve journal of a device', function() {
     cy.get('input[placeholder="Search by keyword."').type('Read_journal_cli_device')	  
     cy.contains('Read_journal_cli_device').click()	  
     cy.get('button').contains('Execute').click()	  
-	  
+    /*  
     //label device_id
     //this is input with autocompletion	  
     //at first try to click it to see the list of devices
@@ -43,13 +48,17 @@ describe('Retrieve journal of a device', function() {
     cy.get('input[placeholder="Enter the node id"').clear().type('XR02') //this is input with autocompletion	  
     cy.get('input[placeholder="Enter the node id"').clear().click() //this is input with autocompletion	  
     cy.contains('XR02').click()
+    */
+    cy.contains('device_id').next().as('device_id') //label bundle_ether_id become alias of next input
+    cy.get('@device_id').type('{selectall}{backspace}')
+    cy.get('@device_id').type('XR02').find('li[aria-label="XR02"]').click()
 
     cy.get('div.modal-content').contains('Execute').click()
     cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
     //this explicit wait is needed to wait for completing of procesing on chain ConductorServer<->ElasticSearch<->Dyn
-    cy.wait(500)
+    cy.wait(1000)
     //hopufully now we are ready to go - let us click the workflow id link
     cy.get('div.modal-footer a:first-child').click() //click the ID of the previously executed workflow to see the progress of the workflow
 	  
@@ -57,7 +66,7 @@ describe('Retrieve journal of a device', function() {
     //click the ID of the previously executed workflow to see the progress of the workflow
     //http://localhost:3000/workflows/exec/bdc20041-0aec-44da-bf69-672d492f1210
     cy.url().should('include', '/workflows/exec')	  
-    cy.get('div.modal-header').contains('Details of Read_journal_cli_device',{timeout:3000})
+    cy.get('div.modal-header').contains('Details of Read_journal_cli_device',{timeout:30000})
     cy.get('div.headerInfo').contains('COMPLETED')
 
     cy.contains('Task Details').click()
@@ -119,6 +128,7 @@ describe('Retrieve journal of a device', function() {
 
     cy.contains('UniConfig').click()
     cy.wait('@getIOS01')
+    cy.wait('@getIOS01')
 
     cy.url().should('include', '/devices')
     cy.get('table tbody tr:nth-child(8)').should('to.exist')
@@ -133,7 +143,7 @@ describe('Retrieve journal of a device', function() {
     cy.get('input[placeholder="Search by keyword."').type('Read_journal_cli_device')	  
     cy.contains('Read_journal_cli_device').click()	  
     cy.get('button').contains('Execute').click()	  
-	  
+    /*
     //label device_id
     //this is input with autocompletion	  
     //at first try to click it to see the list of devices
@@ -144,18 +154,22 @@ describe('Retrieve journal of a device', function() {
     cy.get('input[placeholder="Enter the node id"').clear().type('IOS01') //this is input with autocompletion	  
     cy.get('input[placeholder="Enter the node id"').clear().click() //this is input with autocompletion	  
     cy.contains('IOS01').click()
+    */
+    cy.contains('device_id').next().as('device_id') //label bundle_ether_id become alias of next input
+    cy.get('@device_id').type('{selectall}{backspace}')
+    cy.get('@device_id').type('IOS01').find('li[aria-label="IOS01"]').click()
 
     cy.get('div.modal-content').contains('Execute').click()	  
     cy.wait('@getWorkflowId')
     cy.get('div.modal-content').contains('Execute').should('not.to.exist')
     cy.get('div.modal-content').contains('OK')
     //this explicit wait is needed to wait for completing of procesing on chain ConductorServer<->ElasticSearch<->Dyn
-    cy.wait(500)
+    cy.wait(1000)
     //hopufully now we are ready to go - let us click the workflow id link
     cy.get('div.modal-footer a:first-child').click() //click the ID of the previously executed workflow to see the progress of the workflow
 
     cy.url().should('include', '/workflows/exec')	  
-    cy.get('div.modal-header').contains('Details of Read_journal_cli_device',{timeout:3000})
+    cy.get('div.modal-header').contains('Details of Read_journal_cli_device',{timeout:30000})
     cy.get('div.headerInfo').contains('COMPLETED')
 
     cy.contains('Task Details').click()

@@ -181,6 +181,11 @@ describe('Mount devices from UniConfig', function() {
     cy.contains(netconfDev).parent().find('td').eq(5).click()
     cy.wait('@getConfig')
     cy.url().should('include', '/devices/edit/' + netconfDev)
+
+    cy.contains('Sync from network').click()
+    cy.get('div.role["alert"]').contains('SYNC-FROM-NETWORK :')
+    cy.get('div.role["alert"]').contains('Node-status: complete')
+
     cy.get('button[class~="round"]').click({force:true})
     cy.contains('Refresh').click()
 
