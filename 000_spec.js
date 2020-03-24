@@ -449,7 +449,7 @@ describe('Mount devices from UniConfig', function() {
   })
 
   var cliDev='netconf-testtool'
-  it('TEST1 ' + cliDev, function() {
+  it.skip('TEST1 ' + cliDev, function() {
     cy.server({
       method: 'GET',
     })
@@ -610,8 +610,175 @@ describe('Mount devices from UniConfig', function() {
     //-->  Hide diff
     cy.contains('Hide Diff').click()
 
-    //TODO
-    // TRY TO FIND LOOPBACK AND REMOVE THE CONFIG
+    // TEARDOWN TRY TO FIND LOOPBACK AND REMOVE THE CONFIG
+    //--> backup intended config
+    //write content to file
+    cy.get('@intended_conf').then(($code) => {
+      const txt = $code.text() 
+      const d = new Date();
+      const localtime = d.toLocaleTimeString('en-US', { hour12: false });
+      cy.writeFile('cypress/fixtures/intendedConf' +  localtime +  '.json', txt)
+    })
+    //--> Intended configuration - remove loopback block
+    cy.get('.config .CodeMirror textarea').as('edit_conf')
+    cy.get('@edit_conf').type('{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}',{force: true})
+    cy.get('@edit_conf').type('{shift}{end}{del}{downarrow}{shift}{end}{del}{downarrow}{shift}{end}{del}{downarrow}{shift}{end}{del}{downarrow}{shift}{end}{del}{downarrow}{shift}{end}{del}{downarrow}{shift}{end}{del}',{force: true})
+    cy.contains('Save').click()
+    cy.contains('Commit to network').click()
+    cy.contains('Sync from network').click()
+    cy.contains('Refresh').next().click()
+    cy.contains('Replace with Operational').click()
+    //--> backup intended config
+    //write content to file
+    cy.get('@intended_conf').then(($code) => {
+      const txt = $code.text() 
+      const d = new Date();
+      const localtime = d.toLocaleTimeString('en-US', { hour12: false });
+      cy.writeFile('cypress/fixtures/intendedConf' +  localtime +  '.json', txt)
+    })
+
+    //******************
+    //Leave devices/edit page
+    cy.get('button[class~="round"]').click()
+    cy.url().should('include', '/devices')
+  })
+
+  var cliDev='netconf-testtool'
+  it('TEST2 ' + cliDev, function() {
+    cy.server({
+      method: 'GET',
+    })
+    cy.route('/api/odl/conf/uniconfig/' + cliDev).as('getConfig')
+    cy.route('/api/odl/oper/uniconfig/' + cliDev).as('getConfig')
+    cy.server({
+      method: 'POST',
+    })
+    cy.route('/api/odl/operations/sync-from-network').as('getConfigFromNetwork')
+    cy.route('/api/odl/operations/replace-config-with-operational').as('getConfigFromOperational')
+    cy.route('/api/odl/operations/create-snapshot').as('postCreateSnapshot')
+
+    cy.visit('/')
+    cy.contains('UniConfig').click()
+
+    cy.url().should('include', '/devices')
+
+    cy.contains(cliDev).parent().find('td').eq(5).click()
+    cy.wait('@getConfig', {timeout:30000})
+    cy.url().should('include', '/devices/edit/' + cliDev)
+
+    //******************
+    //--> backup intended config
+    //define element
+    cy.get('div.config > div > div > div.ReactCodeMirror > textarea').as('intended_conf')
+    //write content to file
+    cy.get('@intended_conf').then(($code) => {
+      const txt = $code.text() 
+      console.log(txt)
+      const d = new Date();
+      const localtime = d.toLocaleTimeString('en-US', { hour12: false }).split(':').join('');
+      cy.writeFile('cypress/fixtures/intendedConf' +  localtime +  '.json', txt)
+    })
+
+    const d = new Date();
+    const localtime = d.toLocaleTimeString('en-US', { hour12: false }).split(':').join('');
+
+    //Create snapshot
+    var Idx='_001' + localtime
+    cy.contains('Create snapshot').click()
+    cy.get('#snapshotNameInput').clear().type(cliDev + Idx).should('have.value', cliDev + Idx)
+    cy.contains('Save Snapshot').click()
+    cy.wait('@postCreateSnapshot')
+    cy.contains('Close').click()
+/*
+    //--> Intended configuration - add loopback block
+    //https://stackoverflow.com/questions/55362875/how-to-type-using-cypress-type-inside-the-codemirror-editor/55363197#55363197
+    cy.get('.config .CodeMirror textarea').as('edit_conf')
+    cy.get('@edit_conf').type('{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}',{force: true})
+    cy.get('@edit_conf').type('{{}{enter}"active":"act",{enter}"interface-name":"loopback1000",{enter}"shutdown":[null]{enter}},{enter}',{force: true})
+    //--> Expect
+    cy.get('div.config div.d2h-file-header').contains('ODL config data store of netconf-testtool')
+    cy.get('div.config div.d2h-file-header').contains('MODIFIED')
+
+    //--> save
+    //Save Intended Configuration (after change)
+    cy.contains('Save').click()
+    //--> Expect
+    cy.get('div.config div.d2h-file-header').contains('ODL config data store of netconf-testtool')
+    //cy.get('div.config div.d2h-file-header').should('not.contain','MODIFIED')
+    //--> Display console
+    cy.get('span#consoleButton').click()
+    cy.contains('Console output of Update Config')
+    cy.contains('"method": "PUT",')
+    //cy.contains('"method": "url": "uniconfig:8181/rests/data/network-topology:network-topology/topology=uniconfig/node=netconf-testtool/frinx-uniconfig-topology:configuration",')
+    cy.contains('Close').click()
+
+    //Create snapshot
+    var Idx='_002' + localtime
+    cy.contains('Create snapshot').click()
+    cy.get('#snapshotNameInput').clear().type(cliDev + Idx).should('have.value', cliDev + Idx)
+    cy.contains('Save Snapshot').click()
+    cy.wait('@postCreateSnapshot')
+    cy.contains('Close').click()
+*/
+    //--> Show Diff
+    cy.contains('Show Diff').click()
+    //--> Hide diff
+    cy.contains('Hide Diff').click()
+    cy.contains('Commit to network').click()
+    //--> Show Diff
+    cy.contains('Show Diff').click()
+    //--> Hide diff
+    cy.contains('Hide Diff').click()
+    cy.contains('Sync from network').click()
+    //--> Show Diff
+    cy.contains('Show Diff').click()
+    //--> Hide diff
+    cy.contains('Hide Diff').click()
+
+    //Load snapshot
+    cy.contains('Load Snapshot').click()
+    cy.contains(cliDev + Idx).click()
+
+    cy.get('.options ~ div[role="alert"]').contains('REPLACE-CONFIG-WITH-SNAPSHOT:')
+    cy.get('.options ~ div[role="alert"]').contains('Node-status: complete')
+    cy.get('.options ~ div[role="alert"] > i').click()
+
+    cy.get('span#consoleButton').click()
+    cy.contains('Console output of Replace-Config-With-Snapshot')
+    cy.contains('Close').click()
+    //--> Show Diff
+    cy.contains('Show Diff').click()
+    cy.screenshot() 
+    //--> Hide diff
+    cy.contains('Hide Diff').click()
+
+    // TEARDOWN TRY TO FIND LOOPBACK AND REMOVE THE CONFIG
+    //--> backup intended config
+    //write content to file
+    cy.get('@intended_conf').then(($code) => {
+      const txt = $code.text() 
+      const d = new Date();
+      const localtime = d.toLocaleTimeString('en-US', { hour12: false }).split(':').join('');
+      cy.writeFile('cypress/fixtures/intendedConf' +  localtime +  '.json', txt)
+    })
+    cy.contains('Sync from network').click()
+    cy.contains('Refresh').next().click()
+    cy.contains('Replace with Operational').click()
+    //--> Show Diff
+    cy.contains('Show Diff').click()
+    cy.screenshot() 
+    //--> Hide diff
+    cy.contains('Hide Diff').click()
+
+    //--> backup intended config
+    //write content to file
+    cy.get('@intended_conf').then(($code) => {
+      const txt = $code.text() 
+      const d = new Date();
+      const localtime = d.toLocaleTimeString('en-US', { hour12: false }).split(':').join('');
+      cy.writeFile('cypress/fixtures/intendedConf' +  localtime +  '.json', txt)
+    })
+
     //******************
     //Leave devices/edit page
     cy.get('button[class~="round"]').click()
