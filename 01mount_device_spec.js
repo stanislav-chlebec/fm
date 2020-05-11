@@ -65,10 +65,10 @@ describe('Mount devices from UniConfig', function() {
       .clear()
       .type('cisco')
 
-    cy.get('button[class="btn btn-primary"]').contains('Mount Device')
-      .then(($button) => {
-      $button.click()
-      })
+    cy.contains('Advanced').click()
+    cy.contains('Basic').click()
+
+    cy.get('button[class="btn btn-primary"]').contains('Mount Device').click()
 
     cy.get('button[class="btn btn-primary"]').should('not.to.exist')
     cy.get('button.btn.btn-success', { timeout : 30000  } ).should('contain','Connected')
@@ -116,8 +116,6 @@ describe('Mount devices from UniConfig', function() {
     cy.contains('Mount Device').click()
 
     cy.contains('Netconf').click()
-    // this does not work - why ??? cy.contains('Basic').click()
-    //cy.get('div.tab-content').contains('Basic', {force:true}).click()// nefunguje lebo najde prvy Basic na prvom paneli ktory je hidden
     cy.get('#mountTabs-tabpane-Netconf').contains('Basic').click()
 
     cy.get('#mountnetconfInput-node-id')
@@ -148,13 +146,9 @@ describe('Mount devices from UniConfig', function() {
     cy.contains('UniConfig Native').click()
     cy.contains('Blacklist').parent().find(':checkbox').click()
 
+    cy.get('#mountTabs-tabpane-Netconf').contains('Basic').click()
 
-
-
-    cy.get('button[class="btn btn-primary"]').contains('Mount Device')
-      .then(($button) => {
-      $button.click()
-      })
+    cy.get('button[class="btn btn-primary"]').contains('Mount Device').click()
 
     cy.get('button[class="btn btn-primary"]').should('not.to.exist')
     cy.get('button.btn.btn-success', { timeout : 30000  } ).should('contain','Connected')
