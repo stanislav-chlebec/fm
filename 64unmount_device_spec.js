@@ -1,15 +1,15 @@
-describe('Unmount added devices', function() { 
+describe('Unmount added devices', function() {
   beforeEach(function() {
     cy.login()
   })
 	
-  it.skip('unmounts devices', function() { 
+  it('unmounts devices', function() {
     cy.server()
     cy.route('/api/odl/oper/all/status/cli').as('getAllStatusCli')
     cy.route('/api/odl/oper/all/status//topology-netconf').as('getAllStatusNetconf')
 
-    cy.visit('/') 
-    cy.contains('UniConfig').click()	  
+    cy.visit('/')
+    cy.contains('UniConfig').click()
 
     //wait a second for finishing of loading of the list of connected devices
     //there is two xhr we will wait for and after then 3 times bunch of xhrs
@@ -24,7 +24,7 @@ describe('Unmount added devices', function() {
     cy.contains(device_id1).parent().find('td').eq(0).click()
     var device_id2='GREATER_ONE_ROUTER' //: any unique identifier
     cy.contains(device_id2).parent().find('td').eq(0).click()
-    cy.contains('Unmount Devices').click()	  
+    cy.contains('Unmount Devices').click()
 
     cy.contains(device_id1).should('not.to.exist')
     cy.contains(device_id2).should('not.to.exist')
